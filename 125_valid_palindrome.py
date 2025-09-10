@@ -7,6 +7,7 @@ Alphanumeric characters include letters and numbers.
 
 Given a string s, return true if it is a palindrome, or false otherwise.
 """
+
 from curses.ascii import isalnum
 from dataclasses import dataclass
 
@@ -31,13 +32,13 @@ class TestCase:
     expected: bool
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_cases = [
-        TestCase(s='A man, a plan, a canal: Panama', expected=True),
-        TestCase(s='race a car', expected=False),
-        TestCase(s=' ', expected=True),
-        TestCase(s='898898', expected=True),
-        TestCase(s='!, ?&*+-', expected=True),
+        TestCase(s="A man, a plan, a canal: Panama", expected=True),
+        TestCase(s="race a car", expected=False),
+        TestCase(s=" ", expected=True),
+        TestCase(s="898898", expected=True),
+        TestCase(s="!, ?&*+-", expected=True),
     ]
     for tc in test_cases:
         assert is_palindrome(tc.s) == tc.expected

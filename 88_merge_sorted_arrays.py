@@ -35,7 +35,7 @@ def merge(nums1: List[int], m: int, nums2: List[int], n: int) -> None:
         k -= 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     arr1 = [1, 2, 3, 0, 0, 0]
     arr2 = [2, 5, 6]
     merge(arr1, 3, arr2, len(arr2))

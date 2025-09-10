@@ -9,6 +9,7 @@ you need to do the following things:
   The remaining elements of nums are not important as well as the size of nums.
 - Return k.
 """
+
 from dataclasses import dataclass
 
 
@@ -26,10 +27,10 @@ class TestCase:
     arr: list[int]
     val: int
     expected: int
-    assert_err_msg: str = 'got={got}, want={want}'
+    assert_err_msg: str = "got={got}, want={want}"
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_cases = [
         TestCase(arr=[3, 2, 2, 3], val=3, expected=2),
         TestCase(arr=[0, 1, 2, 2, 3, 0, 4, 2], val=2, expected=5),
@@ -37,4 +38,4 @@ if __name__ == '__main__':
     for tc in test_cases:
         actual = remove_element(tc.arr, tc.val)
         assert actual == tc.expected, tc.assert_err_msg.format(got=actual, want=tc.expected)
-        assert all(x != tc.val for x in tc.arr[:tc.expected])
+        assert all(x != tc.val for x in tc.arr[: tc.expected])

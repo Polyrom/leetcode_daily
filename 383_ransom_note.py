@@ -4,6 +4,7 @@ Given two strings ransomNote and magazine, return true if ransomNote can be cons
 by using the letters from magazine and false otherwise.
 Each letter in magazine can only be used once in ransomNote.
 """
+
 from collections import Counter
 from dataclasses import dataclass
 
@@ -24,12 +25,12 @@ class TestCase:
     expected: bool
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_cases = [
-        TestCase(ransom_note='a', magazine='b', expected=False),
-        TestCase(ransom_note='aa', magazine='ab', expected=False),
-        TestCase(ransom_note='faskj', magazine='flkjkjbahh', expected=False),
-        TestCase(ransom_note=' ', magazine='   ', expected=True),
+        TestCase(ransom_note="a", magazine="b", expected=False),
+        TestCase(ransom_note="aa", magazine="ab", expected=False),
+        TestCase(ransom_note="faskj", magazine="flkjkjbahh", expected=False),
+        TestCase(ransom_note=" ", magazine="   ", expected=True),
     ]
     for tc in test_cases:
         assert can_construct(tc.ransom_note, tc.magazine) == tc.expected
