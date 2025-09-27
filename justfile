@@ -9,3 +9,6 @@ format-all:
 
 format-file filename:
         uv run ruff format {{filename}}
+
+generate:
+        uv run generate_template.py
