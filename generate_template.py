@@ -1,6 +1,18 @@
 import os
 import re
 from dataclasses import dataclass
+from enum import Enum
+
+
+class Colors(str, Enum):
+    RESET = "\033[0m"
+    RED = "\033[31m"
+    GREEN = "\033[32m"
+    BLUE = "\033[34m"
+
+
+def color_text(text: str, ansi_color: str) -> str:
+    return f"{ansi_color}{text}{Colors.RESET.value}"
 
 
 class Prompts:
@@ -52,10 +64,10 @@ class LeetcodeProblemTemplate:
             if "Optional" in type_hint:
                 opening_idx = type_hint.find("[")
                 closing_idx = type_hint.find("]")
-                actual_type = type_hint[opening_idx + 1: closing_idx]
+                actual_type = type_hint[opening_idx + 1 : closing_idx]
                 type_hint = f"{actual_type} | None"
             else:
-                type_hint =  type_hint.lower().strip()
+                type_hint = type_hint.lower().strip()
             params.append(FunctionParam(name=name.strip(), type_hint=type_hint))
         return params
 
@@ -128,11 +140,11 @@ if __name__ == "__main__":
 
 
 if __name__ == "__main__":
-    filename = input(Prompts.FILENAME).strip()
-    filepath = input(Prompts.FILE_LOCATION).strip()
-    url = input(Prompts.PROBLEM_LINK).strip()
+    filename = input(color_text(Prompts.FILENAME, Colors.RED.value)).strip()
+    filepath = input(color_text(Prompts.FILE_LOCATION, Colors.RED.value)).strip()
+    url = input(color_text(Prompts.PROBLEM_LINK, Colors.RED.value)).strip()
 
-    print(Prompts.PROBLEM_DESC)
+    print(color_text(Prompts.PROBLEM_DESC, Colors.RED.value))
     desc = []
     while True:
         data = input().strip()
@@ -141,8 +153,8 @@ if __name__ == "__main__":
         desc.append(data)
     desc = "\n".join(desc)
 
-    func_decl = input(Prompts.LEETCODE_FUNC_DECL).strip()
-    is_test_generated = input(Prompts.IS_TEST_GENERATED).strip()
+    func_decl = input(color_text(Prompts.LEETCODE_FUNC_DECL, Colors.RED.value)).strip()
+    is_test_generated = input(color_text(Prompts.IS_TEST_GENERATED, Colors.RED.value)).strip()
     is_test_generated = is_test_generated.strip() in ("y", "yes")
 
     params = LeetcodeProblemParams(
