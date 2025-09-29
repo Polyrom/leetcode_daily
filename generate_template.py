@@ -1,3 +1,15 @@
+"""
+Script to generate an opinionated template solution Python module for LeetCode problem.
+
+```bash
+>>> python generate_template.py
+```
+or using justfile:
+```bash
+just generate
+```
+"""
+
 import os
 import re
 from dataclasses import dataclass
@@ -6,22 +18,21 @@ from enum import Enum
 
 class Colors(str, Enum):
     RESET = "\033[0m"
-    RED = "\033[31m"
     GREEN = "\033[32m"
     BLUE = "\033[34m"
 
 
-def color_text(text: str, ansi_color: str) -> str:
+def _(text: str, ansi_color: str) -> str:
     return f"{ansi_color}{text}{Colors.RESET.value}"
 
 
 class Prompts:
-    FILENAME = "Filename: "
-    FILE_LOCATION = "File location: "
     PROBLEM_LINK = "Link to problem: "
-    PROBLEM_DESC = "Problem description (type STOP and hit Enter when you're done): "
+    PROBLEM_NAME = "Problem number and name: "
+    PROBLEM_DESC = "Problem description, contraints, etc. (type DONE and hit Enter when you're done): "
     LEETCODE_FUNC_DECL = "Function declaration line from LeetCode: "
-    IS_TEST_GENERATED = "Should we generate tests (y/n)? "
+    DIR_NAME = "Target directory"
+    IS_TEST_GENERATED = "Should we generate tests (y/n, hit ENTER to skip)? "
 
 
 IMPORT_DATACLASS = "from dataclasses import dataclass"
@@ -29,11 +40,11 @@ IMPORT_DATACLASS = "from dataclasses import dataclass"
 
 @dataclass
 class LeetcodeProblemParams:
-    filename: str
-    location: str
+    name: str
     url: str
     desc: str
     func_decl: str
+    dir_name: str
     is_test_generated: bool
 
 
@@ -55,7 +66,7 @@ class LeetcodeProblemTemplate:
         self.params = params
 
     @staticmethod
-    def _extract_params(params_raw: list[str]) -> list[FunctionParam]:
+    def _extract_func_params(params_raw: list[str]) -> list[FunctionParam]:
         params = []
         for pr in params_raw:
             if pr == "self":
@@ -77,6 +88,11 @@ class LeetcodeProblemTemplate:
         s2 = re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1)
         return s2.lower()
 
+    def _generate_filename_from_problem_name(self) -> str:
+        problem_num, problem_name = (part.strip() for part in self.params.name.split("."))
+        problem_name_snake = "_".join(w.lower() for w in problem_name.split(" "))
+        return f"{problem_num}_{problem_name_snake}"
+
     def _extract_func_props(self) -> FunctionProps:
         f_as_in_def_idx = self.params.func_decl.find("f")
         opening_bracket_idx = self.params.func_decl.find("(")
@@ -85,7 +101,7 @@ class LeetcodeProblemTemplate:
 
         func_name_raw = self.params.func_decl[f_as_in_def_idx + 2 : opening_bracket_idx]
         func_name = self.camel_to_snake(func_name_raw)
-        func_params = self._extract_params(
+        func_params = self._extract_func_params(
             self.params.func_decl[opening_bracket_idx + 1 : closing_bracket_idx].split(","),
         )
         return_type_hint = self.params.func_decl[arrow_idx + 2 : -1].strip()
@@ -133,34 +149,38 @@ if __name__ == "__main__":
             f"-> {func_props.return_type_hint}:\n    pass\n\n"
             f"{test_case_part}\n"
         )
-        filepath = os.path.join(self.params.location, self.params.filename + ".py")
+        filename = self._generate_filename_from_problem_name()
+        filepath = os.path.join(self.params.dir_name, filename + ".py")
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
         with open(filepath, "w") as f:
             f.write(file_contents)
-        print(f"File {filepath} generated!")
+        print(f"File {_(filepath, Colors.GREEN.value)} generated!")
 
 
 if __name__ == "__main__":
-    filename = input(color_text(Prompts.FILENAME, Colors.RED.value)).strip()
-    filepath = input(color_text(Prompts.FILE_LOCATION, Colors.RED.value)).strip()
-    url = input(color_text(Prompts.PROBLEM_LINK, Colors.RED.value)).strip()
-
-    print(color_text(Prompts.PROBLEM_DESC, Colors.RED.value))
+    url = input(_(Prompts.PROBLEM_LINK, Colors.GREEN.value)).strip()
+    problem_name = input(_(Prompts.PROBLEM_NAME, Colors.GREEN.value)).strip()
+    print(_(Prompts.PROBLEM_DESC, Colors.GREEN.value))
     desc = []
     while True:
         data = input().strip()
-        if data.lower() == "stop":
+        if data.lower() == "done":
             break
         desc.append(data)
     desc = "\n".join(desc)
-
-    func_decl = input(color_text(Prompts.LEETCODE_FUNC_DECL, Colors.RED.value)).strip()
-    is_test_generated = input(color_text(Prompts.IS_TEST_GENERATED, Colors.RED.value)).strip()
+    func_decl = input(_(Prompts.LEETCODE_FUNC_DECL, Colors.GREEN.value)).strip()
+    print(_(Prompts.DIR_NAME, Colors.GREEN.value))
+    print(_("Directories on this level:", Colors.BLUE.value))
+    print(f"{'\n'.join(f'- {f}/' for f in os.listdir() if os.path.isdir(f) and not f.startswith(('.', '_')))}")
+    print(_("======", Colors.BLUE.value))
+    dir_name = input(_("Enter directory name (will be created if missing): ", Colors.GREEN.value)).strip()
+    is_test_generated = input(_(Prompts.IS_TEST_GENERATED, Colors.GREEN.value)).strip()
     is_test_generated = is_test_generated.strip() in ("y", "yes")
 
     params = LeetcodeProblemParams(
-        filename=filename,
-        location=filepath,
+        dir_name=dir_name,
         url=url,
+        name=problem_name,
         desc=desc,
         func_decl=func_decl,
         is_test_generated=is_test_generated,
