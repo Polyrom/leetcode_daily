@@ -29,7 +29,7 @@ def _(text: str, ansi_color: str) -> str:
 class Prompts:
     PROBLEM_LINK = "Link to problem: "
     PROBLEM_NAME = "Problem number and name: "
-    PROBLEM_DESC = "Problem description, contraints, etc. (type DONE and hit Enter when you're done): "
+    PROBLEM_DESC = "Problem description, constraints, etc. (type DONE and hit Enter when you're done): "
     LEETCODE_FUNC_DECL = "Function declaration line from LeetCode: "
     DIR_NAME = "Target directory"
     IS_TEST_GENERATED = "Should we generate tests (y/n, hit ENTER to skip)? "
@@ -65,8 +65,7 @@ class LeetcodeProblemTemplate:
     def __init__(self, params: LeetcodeProblemParams) -> None:
         self.params = params
 
-    @staticmethod
-    def _extract_func_params(params_raw: list[str]) -> list[FunctionParam]:
+    def _extract_func_params(self, params_raw: list[str]) -> list[FunctionParam]:
         params = []
         for pr in params_raw:
             if pr == "self":
@@ -79,11 +78,11 @@ class LeetcodeProblemTemplate:
                 type_hint = f"{actual_type} | None"
             else:
                 type_hint = type_hint.lower().strip()
-            params.append(FunctionParam(name=name.strip(), type_hint=type_hint))
+            params.append(FunctionParam(name=self._camel_to_snake(name.strip()), type_hint=type_hint))
         return params
 
     @staticmethod
-    def camel_to_snake(name: str) -> str:
+    def _camel_to_snake(name: str) -> str:
         s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", name)
         s2 = re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1)
         return s2.lower()
@@ -100,7 +99,7 @@ class LeetcodeProblemTemplate:
         arrow_idx = self.params.func_decl.find(">")
 
         func_name_raw = self.params.func_decl[f_as_in_def_idx + 2 : opening_bracket_idx]
-        func_name = self.camel_to_snake(func_name_raw)
+        func_name = self._camel_to_snake(func_name_raw)
         func_params = self._extract_func_params(
             self.params.func_decl[opening_bracket_idx + 1 : closing_bracket_idx].split(","),
         )
