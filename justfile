@@ -1,14 +1,14 @@
-lint-all:
+@lint-all:
         uv run ruff check .
 
-lint-file filename:
+@lint-file filename:
         uv run ruff check {{filename}}
 
-format-all:
+@format-all:
         uv run ruff format .
 
-format-file filename:
+@format-file filename:
         uv run ruff format {{filename}}
 
-generate:
+@generate:
         uv run generate_template.py
