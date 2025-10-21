@@ -42,3 +42,8 @@ indent-style = "space"
 line-ending = "auto"
 skip-magic-trailing-comma = false
 
+[tool.uv]
+dev-dependencies = [
+    "ipython>=9.6.0",
+]
+
