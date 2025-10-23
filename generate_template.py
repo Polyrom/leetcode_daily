@@ -142,7 +142,7 @@ if __name__ == "__main__":
         func_props = self._extract_func_props()
         test_case_part = self._generate_test_case_part(func_props)
         file_contents = (
-            f'"""\n{self.params.url}\n\n{self.params.desc}\n"""\n\n'
+            f'"""\n{self.params.url}\n\n{self.params.name}\n\n{self.params.desc}\n"""\n\n'
             f"{IMPORT_DATACLASS}\n\n\n"
             f"def {func_props.name}({', '.join([p.name + ': ' + p.type_hint for p in func_props.params])}) "
             f"-> {func_props.return_type_hint}:\n    pass\n\n"
