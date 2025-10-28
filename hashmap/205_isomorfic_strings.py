@@ -25,6 +25,20 @@ def is_isomorphic(s: str, t: str) -> bool:
     return True
 
 
+def is_isomorphic_new(s: str, t: str) -> bool:
+    if len(s) != len(t):
+        return False
+    if len(set(s)) != len(set(t)):
+        return False
+
+    s_to_t = {}
+    for i in range(len(s)):
+        if (char_t := s_to_t.get(s[i])) and char_t != t[i]:
+            return False
+        s_to_t[s[i]] = t[i]
+    return True
+
+
 @dataclass
 class TestCase:
     s1: str
@@ -41,3 +55,4 @@ if __name__ == "__main__":
     ]
     for i, tc in enumerate(test_cases, 1):
         assert is_isomorphic(tc.s1, tc.s2) == tc.expected, f"test case #{i} failed"
+        assert is_isomorphic_new(tc.s1, tc.s2) == tc.expected, f"test case #{i} failed"
