@@ -12,3 +12,6 @@
 
 @generate:
         uv run generate_template.py
+
+@get-random-problem:
+        uv run get_random_problem.py
