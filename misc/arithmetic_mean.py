@@ -21,7 +21,7 @@ def arithmetic_means(nums: list[int], w: int) -> list[int | float]:
     if n == 0:
         return []
 
-    result = []
+    result: list[int | float] = []
     current_sum = sum(nums[: min(w, n)])
 
     for i in range(n):
@@ -38,7 +38,8 @@ def arithmetic_means(nums: list[int], w: int) -> list[int | float]:
 
 def arithmetic_means_right_to_left(nums: list[int], w: int) -> list[int | float]:
     n = len(nums)
-    res, curr = [0] * n, 0
+    res: list[int | float] = [0] * n
+    curr = 0
     for i in range(n - 1, -1, -1):
         curr += nums[i]
         if i + w < n:
